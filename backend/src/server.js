@@ -1,9 +1,27 @@
 import express from "express";
+import { clerkMiddleware } from "@clerk/express";
+
+import userRoutes from "./routes/user.route.js";
 
 import { ENV } from "./config/env.js";
 import { connectDB } from "./config/db.js";
 
 const app = express();
+
+app.use(express.json());
+
+// Adds Clerk authentication middleware to your Express app
+// Runs on every incoming request before reaching your routes
+app.use(clerkMiddleware());
+
+app.get("/", (req, res) => res.send("Hello from server"));
+
+app.use("/api/users", userRoutes);
+
+app.use((err, req, res, next) => {
+  console.error("Unhandled error:", err);
+  res.status(500).json({ error: err.message || "Internal server error" });
+});
 
 const startServer = async () => {
   try {
