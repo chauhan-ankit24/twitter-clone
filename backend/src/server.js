@@ -1,4 +1,5 @@
 import express from "express";
+import cors from "cors";
 import { clerkMiddleware } from "@clerk/express";
 
 import userRoutes from "./routes/user.route.js";
@@ -12,6 +13,7 @@ import { arcjetMiddleware } from "./middleware/arcjet.middleware.js";
 
 const app = express();
 
+app.use(cors());
 app.use(express.json());
 
 // Adds Clerk authentication middleware to your Express app
@@ -27,7 +29,7 @@ app.use("/api/posts", postRoutes);
 app.use("/api/comments", commentRoutes);
 app.use("/api/notifications", notificationRoutes);
 
-
+// error handling middleware
 app.use((err, req, res, next) => {
   console.error("Unhandled error:", err);
   res.status(500).json({ error: err.message || "Internal server error" });
